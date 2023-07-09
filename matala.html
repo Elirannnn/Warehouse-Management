@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Warehouse Management</title>
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    form {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f7f7f7;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    button[type="submit"] {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    #itemList {
+      margin-top: 20px;
+    }
+
+    #itemList div {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background-color: #f7f7f7;
+    }
+
+    hr {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Warehouse Management</h1>
+
+  <div class="container">
+    <div>
+      <h2>Add Item</h2>
+      <form id="addItemForm">
+        <label for="itemName">Name:</label>
+        <input type="text" id="itemName">
+        <br>
+        <label for="itemLocation">Location:</label>
+        <input type="text" id="itemLocation">
+        <br>
+        <label for="itemStock">Stock:</label>
+        <input type="number" id="itemStock">
+        <br>
+        <button type="submit">Add Item</button>
+      </form>
+    </div>
+
+    <div>
+      <h2>Edit Item</h2>
+      <form id="editItemForm">
+        <label for="editIndex">Index:</label>
+        <input type="number" id="editIndex">
+        <br>
+        <label for="editName">Name:</label>
+        <input type="text" id="editName">
+        <br>
+        <label for="editLocation">Location:</label>
+        <input type="text" id="editLocation">
+        <br>
+        <label for="editStock">Stock:</label>
+        <input type="number" id="editStock">
+        <br>
+        <button type="submit">Edit Item</button>
+      </form>
+    </div>
+
+    <div>
+      <h2>Delete Item</h2>
+      <form id="deleteItemForm">
+        <label for="deleteIndex">Index:</label>
+        <input type="number" id="deleteIndex">
+        <br>
+        <button type="submit">Delete Item</button>
+      </form>
+    </div>
+  </div>
+
+  <div>
+    <h2>All Items</h2>
+    <div id="itemList"></div>
+  </div>
+
+  <script>
+    class Item {
+      constructor(name, location, stock) {
+        this.name = name;
+        this.location = location;
+        this.stock = stock;
+      }
+    }
+
+    class Warehouse {
+      constructor() {
+        this.items = [];
+      }
+
+      addItem(name, location, stock) {
+        const newItem = new Item(name, location, stock);
+        this.items.push(newItem);
+      }
+
+      editItem(index, name, location, stock) {
+        if (index >= 0 && index < this.items.length) {
+          const editedItem = new Item(name, location, stock);
+          this.items[index] = editedItem;
+        } else {
+          console.log('Invalid index');
+        }
+      }
+
+      deleteItem(index) {
+        if (index >= 0 && index < this.items.length) {
+          this.items.splice(index, 1);
+        } else {
+          console.log('Invalid index');
+        }
+      }
+
+      displayItems() {
+        const itemList = document.getElementById('itemList');
+        itemList.innerHTML = '';
+
+        this.items.forEach((item, index) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.innerHTML = `
+            <p><strong>Item ${index + 1}:</strong></p>
+            <p>Name: ${item.name}</p>
+            <p>Location: ${item.location}</p>
+            <p>Stock: ${item.stock}</p>
+            <hr>
+          `;
+          itemList.appendChild(itemDiv);
+        });
+      }
+    }
+
+    const warehouse = new Warehouse();
+
+    const addItemForm = document.getElementById('addItemForm');
+    addItemForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const itemName = document.getElementById('itemName').value;
+      const itemLocation = document.getElementById('itemLocation').value;
+      const itemStock = parseInt(document.getElementById('itemStock').value);
+      warehouse.addItem(itemName, itemLocation, itemStock);
+      warehouse.displayItems();
+      addItemForm.reset();
+    });
+
+    const editItemForm = document.getElementById('editItemForm');
+    editItemForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const editIndex = parseInt(document.getElementById('editIndex').value) - 1;
+      const editName = document.getElementById('editName').value;
+      const editLocation = document.getElementById('editLocation').value;
+      const editStock = parseInt(document.getElementById('editStock').value);
+      warehouse.editItem(editIndex, editName, editLocation, editStock);
+      warehouse.displayItems();
+      editItemForm.reset();
+    });
+
+    const deleteItemForm = document.getElementById('deleteItemForm');
+    deleteItemForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const deleteIndex = parseInt(document.getElementById('deleteIndex').value) - 1;
+      warehouse.deleteItem(deleteIndex);
+      warehouse.displayItems();
+      deleteItemForm.reset();
+    });
+
+    warehouse.displayItems();
+  </script>
+</body>
+</html>
